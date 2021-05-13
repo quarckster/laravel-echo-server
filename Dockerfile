@@ -1,11 +1,13 @@
 FROM node:latest
-MAINTAINER Jessica Smith <jessica.smith@fasthosts.com>
+MAINTAINER Dmitry Misharov <misharov@redhat.com>
 
 COPY files /
 RUN \
 	npm install -g laravel-echo-server && \
 	cd /opt/laravel-echo-server && \
-	chmod +x entrypoint.sh
+	chmod +x entrypoint.sh && \
+	chgrp -R 0 /opt/laravel-echo-server && \
+    chmod -R g+rwX /opt/laravel-echo-server
 
 EXPOSE 6001
 ENV \
@@ -26,5 +28,6 @@ ENV \
 	ECHO_ALLOW_HEADERS="Origin, Content-Type, X-Auth-Token, X-Requested-With, Accept, Authorization, X-CSRF-TOKEN, X-Socket-Id"
 
 WORKDIR /opt/laravel-echo-server
+USER 1001
 ENTRYPOINT ["/opt/laravel-echo-server/entrypoint.sh"]
 CMD ["laravel-echo-server", "start"]
